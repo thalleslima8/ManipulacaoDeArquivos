@@ -14,7 +14,33 @@ namespace ManipulacaoDeArquivos {
             List<Itens> itens = new List<Itens>();
 
 
+
+            if (File.Exists(sourceFilePath)) {
+                try {
+                    string[] lines = File.ReadAllLines(sourceFilePath);
+                    foreach(string line in lines) {
+                        string[] fields = line.Split(',');
+                        string name = fields[0];
+                        double price = double.Parse(fields[1]);
+                        int quantity = int.Parse(fields[2]);
+
+                        itens.Add(new Itens(name, price, quantity));
+                        foreach (Itens i in itens) {
+                            Console.WriteLine("Item cadastrado: " + i.Nome);
+                        }
+                    }
+
+                }catch(IOException e) {
+                    Console.Write("Erro: ");
+                    Console.WriteLine(e.Message);
+                }
+
+            }
+
+
+
             for (int i = 0; i < n; i++) {
+                Console.WriteLine();
                 Console.WriteLine("Digite o nome do Item: ");
                 string nome = Console.ReadLine();
                 Console.WriteLine("Digite a Quantidade: ");
@@ -40,13 +66,15 @@ namespace ManipulacaoDeArquivos {
                 }
 
                 string sourceFolderPath = Path.GetDirectoryName(sourceFilePath);
-                Console.WriteLine(sourceFolderPath);
+                //Console.WriteLine(sourceFolderPath);
                 string targetFolderPath = sourceFolderPath + @"\out";
-                Console.WriteLine(targetFolderPath);
+                //Console.WriteLine(targetFolderPath);
                 string targetFilePath = targetFolderPath + @"\summary.csv";
-                Console.WriteLine(targetFilePath);
+                //Console.WriteLine(targetFilePath);
 
-                Directory.CreateDirectory(targetFolderPath);
+                if (!Directory.Exists(targetFolderPath)) {
+                    Directory.CreateDirectory(targetFolderPath);
+                }
 
                 if (!File.Exists(targetFilePath)) {
                     using (StreamWriter sw = File.CreateText(targetFilePath)) {
@@ -55,7 +83,7 @@ namespace ManipulacaoDeArquivos {
                         }
                     }
                 } else {
-                                        using (StreamWriter sw = File.AppendText(targetFilePath)) {
+                    using (StreamWriter sw = File.AppendText(targetFilePath)) {
                         foreach (Itens i in itens) {
                             sw.WriteLine(i.Nome + "," + i.Qtd + "," + i.ValorUnitario + "," + i.valorTotalDoItem());
                         }
@@ -68,8 +96,7 @@ namespace ManipulacaoDeArquivos {
             }
 
 
-
-
+        
         }
     }
 }
